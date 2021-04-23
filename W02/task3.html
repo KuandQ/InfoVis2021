@@ -1,0 +1,178 @@
+<html>
+   <head>
+   <title>W02: Task 03</title>
+     <style>
+     input[type="number"]{
+       text-align:center;
+       width:100px;
+     }
+     </style>
+     <script>
+     var v0,v1,v2;
+     var vertices = [];
+     //Classes and computational formulas
+     Vec3 = function(x, y, z){
+       this.x = x;
+       this.y = y;
+       this.z = z;
+
+       this.elements = [x, y, z];
+     }
+
+     function AreaOfTriangle(v0,v1,v2){
+       V1 = [];
+       V2 = [];
+       for(var i = 0;i < 3;i++){
+         V1.push(v0.elements[i] - v1.elements[i]);
+         V2.push(v0.elements[i] - v2.elements[i]);
+       }
+       cross_product = [
+         V1[1] * V2[2] - V2[1] * V1[2],
+         V1[2] * V2[0] - V2[2] * V1[0],
+         V1[0] * V2[1] - V2[0] * V1[1],
+       ]
+       norm = 0;
+       for(var i = 0;i < 3; i++){
+         norm += cross_product[i] * cross_product[i];
+       }
+       norm = Math.sqrt(norm);
+       return norm/2;
+     }
+
+     function compute(){
+       vertices = [];
+       for(var i = 0; i < 3; i++){
+         vertex = [];
+         for(var j = 0; j < 3; j++){
+           vertex.push(
+             Number(document.getElementById(generateElementId(i,j)).value)
+           );
+         }
+         vertices.push(vertex);
+       }
+
+       v0 = new Vec3(vertices[0][0],vertices[0][1],vertices[0][2]);
+       v1 = new Vec3(vertices[1][0],vertices[1][1],vertices[1][2]);
+       v2 = new Vec3(vertices[2][0],vertices[2][1],vertices[2][2]);
+
+       area = AreaOfTriangle(v0, v1, v2);
+       document.getElementById("result").innerHTML = "<h2>The Area S =" + area + " units</h2>";
+     }
+
+     function init(){
+       var v0,v1,v2;
+       var vertices = [];
+       document.getElementById("result").innerHTML = "<h2>Please input the numbers you want to compute</h2>"
+     }
+
+     function generateElementId(vertex_number,coordinate){
+       tmp = "form_vertex_$_%";
+       return tmp.replace("$",vertex_number).replace("%",coordinate);
+     }
+
+     </script>
+   </head>
+
+   <body onload="init();">
+    <form id ="form">
+      <fieldset style="">
+        <legend>
+          Vertex 0
+        </legend>
+        <table>
+          <tr>
+            <td>
+              <label>
+                Enter x0:<input type="number" id="form_vertex_0_0" value=0>
+              </label>
+            </td>
+          </tr>
+          <tr>
+              <td>
+                  <label>
+                  Enter y0:<input type="number" id="form_vertex_0_1" value=0 />
+                  </label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <label>
+                  Enter z0:<input type="number" id="form_vertex_0_2" value=0 />
+                  </label>
+              </td>
+          </tr>
+      </table>
+  </fieldset>
+
+  <fieldset style="">
+      <legend>
+          Vertex 1
+      </legend>
+      <table>
+
+          <tr>
+              <td>
+                  <label>
+                  Enter x1:<input type="number" id="form_vertex_1_0" value=1 />
+                  </label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <label>
+                  Enter y1:<input type="number" id="form_vertex_1_1" value=0 />
+                  </label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <label>
+                  Enter z1:<input type="number" id="form_vertex_1_2" value=0 />
+                  </label>
+              </td>
+          </tr>
+      </table>
+  </fieldset>
+
+  <fieldset style="">
+      <legend>
+          Vertex 2
+      </legend>
+      <table>
+
+          <tr>
+              <td>
+                  <label>
+                  Enter x2:<input type="number" id="form_vertex_2_0" value=0 />
+                  </label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <label>
+                  Enter y2:<input type="number" id="form_vertex_2_1" value=1 />
+                  </label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <label>
+                  Enter z2:<input type="number" id="form_vertex_2_2" value=0 />
+                  </label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <input type="reset" onclick="init();" />
+                  <input type="button" onclick="compute();" value="Go">
+                  </input>
+              </td>
+          </tr>
+      </table>
+  </fieldset>
+</form>
+<p style="border: 1px dashed black; min-width: 20px; width: 250px; text-align: center;" id="result">
+
+</p>
+</body>
+</html>
