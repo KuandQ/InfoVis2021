@@ -29,6 +29,7 @@ class PieChart {
         .innerRadius(0)
         .outerRadius(self.config.radius);
 
+
   }
 
   update(){
@@ -41,14 +42,30 @@ class PieChart {
   render(){
     let self = this;
 
-    self.chart.selectAll('pie')
+    /*self.chart.selectAll('pie')
         .data(self.pie(self.data))
         .enter()
         .append('path')
         .attr('d', self.arc)
-        .attr('fill', d => d.color)
+        .attr('fill', "green")
         .attr('stroke', 'black')
-        .style('stroke-width', '2px');
+        .style('stroke-width', '2px');*/
+    var a = self.chart.selectAll(".pie")
+        .data(self.pie(self.data))
+        .enter()
+        .append('g')
+        .attr("class","pie")
+
+        a.append("path")
+         .attr('d', self.arc)
+         .attr('stroke',"white")
+         .attr('fill', d => d.data.color)
+         .style('stroke_width', '2px')
+
+        a.append("text")
+         .attr("fill","black")
+         .attr("transform", function(d){return "translate(" + self.arc.centroid(d) +")";})
+         .text(d => d.data.label)
 
    }
 
