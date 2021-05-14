@@ -1,7 +1,7 @@
-"label","value"
-"Cheesecake",150
-"Apple Pie",100
-"Babka",30
-"Baumkuchen",70
-"Butterfly",200
-"Cupcake",250
+"label","value","color"
+"Cheesecake",150,"yellow"
+"Apple Pie",100,"red"
+"Babka",30,"black"
+"Baumkuchen",70,"purple"
+"Butterfly",200,"pink"
+"Cupcake",250,"green"
