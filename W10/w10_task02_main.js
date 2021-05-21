@@ -1,106 +1,147 @@
 d3.csv("https://kuandq.github.io/InfoVis2021/W04/w04_task.csv")
     .then( data => {
         data.forEach( d => { d.x = +d.x; d.y = +d.y; });
-        ShowScatterPlot( data );
+        var config = {
+          parent: '#drawing_region',
+          width: 256,
+          height: 256,
+          margin: {top:50, right:10, bottom:20, left:50}
+        };
+        const scatter_plot = new ScatterPlot( config, data );
+        scatter_plot.update();
     })
     .catch( error => {
         console.error( error );
     });
 
 
-function ShowScatterPlot( data ) {
-  const margin = {top: 40, right: 20, bottom: 100, left: 100};
-  const width = 460 - margin.left - margin.right;
-  const height = 460 - margin.top - margin.bottom;
-  var svg = d3.select("body").append("svg")
-     .attr("width", width + margin.left + margin.right)
-     .attr("height", height + margin.top + margin.bottom)
-     .append('g')
-     .attr('transform',"translate(" + margin.left +"," + margin.top + ")");
+    class ScatterPlot {
+
+        constructor( config, data ) {
+            this.config = {
+                parent: config.parent,
+                width: config.width || 256,
+                height: config.height || 256,
+                margin: config.margin || {top:30, right:10, bottom:10, left:10}
+            }
+            this.data = data;
+            this.init();
+        }
+
+        init() {
+            let self = this;
+
+            self.svg = d3.select( self.config.parent )
+                .attr('width', self.config.width)
+                .attr('height', self.config.height);
+
+            self.chart = self.svg.append('g')
+                .attr('transform', `translate(${self.config.margin.left}, ${self.config.margin.top})`);
+
+            self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
+            self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
+
+            self.xscale = d3.scaleLinear()
+                //.domain([d3.min(data, d=>d.x),d3.max(data,d =>d.x)])
+                .range( [0, self.inner_width] );
+
+            self.yscale = d3.scaleLinear()
+                //.domain([d3.min(data, d=>d.x),d3.max(data,d =>d.x)])
+                .range( [ self.inner_height,0] );
+
+            self.xaxis = d3.axisBottom( self.xscale )
+                //.tickValues( data_set.filter( function(d,i){ return !(i % 2); }));
+                .ticks(6);
+
+
+            self.xaxis_group = self.chart.append('g')
+                .attr('transform', `translate(0, ${self.inner_height})`)
+
+            self.xaxis_group.append("text")
+                .text("Xlabel")
+                .attr("x",self.inner_width/2)
+                .attr("y",50)
+                .attr("font-family","sans-serif")
+                .attr("font-size","10pt")
+                .attr("fill","black");
+
+
+            self.xaxis_group.append("text")
+                .text("Sample Data")
+                .attr("x",self.inner_width/2)
+                .attr("y",-200)
+                .attr("font-family","sans-serif")
+                .attr("font-size","20pt")
+                .attr("fill","black");
 
 
 
-  var x = d3.scaleLinear()
-     .domain( [0,200] )
-     .range( [0, width] );
-  svg.append("g")
-     .attr("transform","translate(0," + height + ")")
-     .call(d3.axisBottom(x));
+            self.yaxis = d3.axisLeft( self.yscale )
+                .ticks(6);
 
-  var y = d3.scaleLinear()
-     .domain( [0, 200] )
-     .range( [height, 0] );
-  svg.append("g")
-     .call(d3.axisLeft(y));
+            self.yaxis_group = self.chart.append('g')
+                .attr('transform', `translate(0,0)`);
 
-/*  var xaxis = d3.axisBottom( xscale )
-     .ticks(6);
-  var yaxis = d3.axisLeft( yscale )
-     .ticks(6); */
+            self.yaxis_group.append("text")
+                .text("Ylabel")
+                .attr("x",-10)
+                .attr("y",self.inner_height/2)
+                .attr("font-family","sans-serif")
+                .attr("font-size","10pt")
+                .attr("fill","black");
+        }
 
-  //Create Title
-  svg.append("text")
-     .attr("x", width/2)
-     .attr("y", 0)
-     .style("text-anchor", "middle")
-     .style("fill","red")
-     .style("font-weight","bold")
-     .style("font-size","30px")
-     .text("Title of Diagram");
+        update() {
+            let self = this;
 
-//X axis title
-  svg.append("text")
-     .attr("text-anchor","end")
-     .attr("x", width/2 + 30)
-     .attr("y", height + margin.top + 40)
-     .text("X axis title");
+            const xmin = d3.min( self.data, d => d.x );
+            const xmax = d3.max( self.data, d => d.x );
+            self.xscale.domain( [0, xmax] );
 
-//Y axis title
-  svg.append("text")
-     .attr("text-anchor","end")
-     .attr("transform","rotate(-90)")
-     .attr("y", -margin.left + 20)
-     .attr("x", -margin.top - 100)
-     .text("Y axis title");
+            const ymin = d3.min( self.data, d => d.y );
+            const ymax = d3.max( self.data, d => d.y );
+            self.yscale.domain( [0, ymax] );
 
-//ymax
-  svg.append("text")
-    .attr("text-anchor","end")
-    .attr("x", -10)
-    .attr("y", -10)
-    .style("font-size","10px")
-    .text("ymax");
+            self.render();
+            //self.xlabel();
+        }
 
-//ymin
-  svg.append("text")
-    .attr("text-anchor","end")
-    .attr("y", height + 10)
-    .attr("x", -10 )
-    .style("font-size","10px")
-    .text("ymin");
+        render() {
+            let self = this;
 
-//xmin
-    svg.append("text")
-      .attr("text-anchor","end")
-      .attr("x", 15)
-      .attr("y", height + 30)
-      .style("font-size","10px")
-      .text("xmin");
+            self.chart.selectAll("circle")
+                .data(self.data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => self.xscale( d.x ) )
+                .attr("cy", d => self.yscale( d.y ) )
+                .attr("r", d => d.r )
+                .attr("fill",d => d.color)
+                .on('mouseover', (e,d) => {
+                    d3.select('#tooltip')
+                            .style('opacity', 1)
+                            .html(`<div class="tooltip-label">Position</div>(${d.x}, ${d.y})`);
+                    })
+                    .on('mousemove', (e) => {
+                        const padding = 10;
+                        d3.select('#tooltip')
+                            .style('left', (e.pageX + padding) + 'px')
+                            .style('top', (e.pageY + padding) + 'px');
+                    })
+                    .on('mouseleave', () => {
+                        d3.select('#tooltip')
+                            .style('opacity', 0);
+                    });
 
-//xmax
-    svg.append("text")
-      .attr("text-anchor","end")
-      .attr("y", height + 30)
-      .attr("x", width + 20)
-      .style("font-size","10px")
-      .text("xmax");
 
-  svg.selectAll("circle")
-     .data(data)
-     .enter()
-     .append("circle")
-     .attr("cx", d => x(d.x))
-     .attr("cy", d => y(d.y))
-     .attr("r", d => d.r)
-     .style("fill", function(d){ return d.color; });
-};
+            self.xaxis_group
+                .call( self.xaxis );
+
+            self.yaxis_group
+                .call( self.yaxis );
+
+
+        }
+
+
+    }
