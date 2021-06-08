@@ -70,8 +70,8 @@ class ScatterPlot {
     update() {
         let self = this;
 
-        self.xvalue = d => d.Wage;
-        self.yvalue = d => d.Age;
+        self.xvalue = d => d.Age;
+        self.yvalue = d => d.Wage;
 
         const xmin = d3.min( self.data, self.xvalue );
         const xmax = d3.max( self.data, self.xvalue );
