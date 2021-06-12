@@ -5,7 +5,7 @@ let lineChart;
 let bar_chart;
 let filter = [];
 
-d3.csv("https://kuandq.github.io/InfoVis2021/final/data.csv")
+d3.csv("https://kuandq.github.io/InfoVis2021/Final_Task/data.csv")
     .then( data => {
         input_data = data;
         input_data.forEach( d => {
