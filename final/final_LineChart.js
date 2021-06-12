@@ -3,8 +3,8 @@ class LineChart {
   constructor( config, data ) {
     this.config = {
       parent: config.parent,
-      width: config.width || 256,
-      height: config.height || 156,
+      width: config.width || 1000,
+      height: config.height || 256,
       margin: config.margin || {top:10, right:10, bottom:10, left:10},
       xticks: config.xticks || 10,
       yticks: config.yticks || 10,
@@ -29,15 +29,15 @@ class LineChart {
     self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
 
     self.xscale = d3.scaleLinear()
-        .domain([0, d3.max(self.data, d => d.Age)])
+        .domain([17, d3.max(self.data, d => d.Age)])
         .range( [0, self.inner_width] );
 
     self.yscale = d3.scaleLinear()
-        .domain([0, d3.max(self.data, d => d.Wage)])
+        .domain([84, d3.max(self.data, d => d.Potential)])
         .range( [self.inner_height, 0] );
 
     self.xaxis = d3.axisBottom( self.xscale )
-        .ticks(7)
+        .ticks(41)
         .tickSizeOuter(0);
 
     self.yaxis = d3.axisLeft(self.yscale)
@@ -52,7 +52,7 @@ class LineChart {
 
     self.line = d3.line()
         .x(d => self.xscale(d.Age))
-        .y(d => self.yscale(d.Wage));
+        .y(d => self.yscale(d.Potential));
   }
 
   update(){
